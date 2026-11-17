@@ -4,7 +4,7 @@
 
 with unido as (
     {% for anio in anios %}
-    select * from {{ source('contaminacion', 'O3_hh_' ~ anio) }}
+    select * from {{ source('contaminacion', 'o3_hh_' ~ anio) }}
     {% if not loop.last %} union all {% endif %}
     {% endfor %}
 ),
