@@ -1,0 +1,13 @@
+contaminante,tipo_valor,periodo,valor_ugm3,superaciones_permitidas_anio,fuente
+O3,valor_objetivo,maxima_diaria_media_8h,120,25,Directiva 2008/50/CE
+O3,umbral_informacion,horario,180,,Directiva 2008/50/CE
+O3,umbral_alerta,horario,240,,Directiva 2008/50/CE
+O3,guia_oms,maxima_diaria_media_8h,100,,OMS 2021
+PM10,valor_limite,diario,50,35,Directiva 2008/50/CE
+PM10,valor_limite,anual,40,,Directiva 2008/50/CE
+PM10,guia_oms,diario,45,,OMS 2021
+PM10,guia_oms,anual,15,,OMS 2021
+NO2,valor_limite,horario,200,18,Directiva 2008/50/CE
+NO2,valor_limite,anual,40,,Directiva 2008/50/CE
+NO2,guia_oms,diario,25,,OMS 2021
+NO2,guia_oms,anual,10,,OMS 2021
