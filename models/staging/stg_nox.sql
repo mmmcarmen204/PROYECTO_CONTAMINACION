@@ -24,7 +24,7 @@ select
     provincia                                           as cod_provincia,
     municipio                                           as cod_municipio,
     parametro                                           as cod_parametro,
-    tecnica                                             as cod_tecnica,
+    cast(tecnica as varchar)                            as cod_tecnica,
 
     -- tiempo
     date_from_parts(anyo, mes, dia)                     as fecha,
