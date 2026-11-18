@@ -1,0 +1,50 @@
+
+
+version: 2
+
+models:
+  - name: slv_mediciones_diarias
+    description: >
+      Mediciones diarias de O3, NOx y PM10 en las estaciones catalogadas de la
+      provincia definida en la variable 'provincia' (Granada). Una fila por
+      estación, contaminante, técnica y día.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_estaciones')
+                field: cod_estacion
+      - name: cod_parametro
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [10, 12, 14]
+                quote: false
+      - name: fecha
+        data_tests:
+          - not_null
+      - name: valor_medio
+        description: "Media diaria de las horas válidas (O3, NOx) o valor diario (PM10), en µg/m3"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: horas_validas
+        description: "Número de horas con dato en el día. Nulo en el PM10, que es diario"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 24
+      - name: es_dia_valido
+        description: "Verdadero si el día tiene al menos 18 horas válidas (75 %). Siempre verdadero en el PM10"
+      - name: max_media_movil_8h
+        description: "Máximo diario de la media móvil de 8 horas con al menos 6 horas válidas. Solo relevante para el O3"
