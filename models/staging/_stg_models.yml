@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_estaciones
+    description: "Listado de estaciones de la red de calidad del aire de Andalucía"
+    columns:
+      - name: cod_estacion
+        description: "Clave de estación: provincia + municipio (3 dígitos) + estación (3 dígitos)"
+        data_tests: [unique, not_null]
+
+  - name: stg_parametros
+    description: "Catálogo de contaminantes medidos"
+    columns:
+      - name: cod_parametro
+        data_tests: [unique, not_null]
+
+  - name: stg_tecnicas
+    description: "Catálogo de técnicas de medición"
+    columns:
+      - name: cod_tecnica
+        data_tests: [unique, not_null]
+
+  - name: stg_o3
+    description: "Mediciones horarias de ozono, Andalucía, 2012-2024"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha, hora]
+    columns:
+      - name: cod_estacion
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_estaciones')
+                field: cod_estacion
+              config:
+                severity: warn   # hay estaciones no catalogadas (p. ej. 18189999)
+      - name: valor
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: stg_nox
+    description: "Mediciones horarias de óxidos de nitrógeno totales (µg/m3 NO2), Andalucía, 2012-2024"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha, hora]
+    columns:
+      - name: cod_estacion
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_estaciones')
+                field: cod_estacion
+              config:
+                severity: warn
+      - name: valor
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: stg_pm10
+    description: "Mediciones diarias de PM10 por técnica (49 automática, M manual, A automática con cambios)"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_estaciones')
+                field: cod_estacion
+              config:
+                severity: warn
+      - name: cod_tecnica
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_tecnicas')
+                field: cod_tecnica
+      - name: valor
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
