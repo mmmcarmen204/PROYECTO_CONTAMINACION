@@ -34,8 +34,6 @@ con_fecha as (
     from despivotado
 )
 
-select
-    cod_estacion, cod_provincia, cod_municipio, cod_parametro, cod_tecnica,
-    fecha, valor
+select *
 from con_fecha
 where fecha is not null    -- descarta días inexistentes (30 de febrero…)
