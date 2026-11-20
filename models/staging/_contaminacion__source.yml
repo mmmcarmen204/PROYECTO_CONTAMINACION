@@ -252,6 +252,10 @@ sources:
             data_type: number
 
       - name: nox_hh_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['nox_hh_2012', 'nox_hh_2016', 'nox_hh_2020']
         columns:
           - name: provincia
             data_type: number
@@ -587,6 +591,10 @@ sources:
             data_type: number
 
       - name: o3_hh_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['o3_hh_2012', 'o3_hh_2016', 'o3_hh_2020']
         columns:
           - name: provincia
             data_type: number
@@ -958,6 +966,10 @@ sources:
             data_type: number
 
       - name: pm10_dd_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['pm10_dd_2012', 'pm10_dd_2016', 'pm10_dd_2020']
         columns:
           - name: provincia
             data_type: number
