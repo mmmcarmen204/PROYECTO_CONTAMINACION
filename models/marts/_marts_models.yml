@@ -1,0 +1,59 @@
+
+version: 2
+
+models:
+  - name: dim_estaciones
+    columns:
+      - name: cod_estacion
+        data_tests: [unique, not_null]
+
+  - name: dim_parametros
+    columns:
+      - name: cod_parametro
+        data_tests: [unique, not_null]
+
+  - name: dim_tecnicas
+    columns:
+      - name: cod_tecnica
+        data_tests: [unique, not_null]
+
+  - name: dim_fecha
+    columns:
+      - name: fecha
+        data_tests: [unique, not_null]
+
+  - name: fct_calidad_aire_diaria
+    description: "Mediciones diarias de O3, NOx y PM10 en Granada. Una fila por estación, contaminante, técnica y día."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_estaciones')
+                field: cod_estacion
+      - name: cod_parametro
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_parametros')
+                field: cod_parametro
+      - name: cod_tecnica
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_tecnicas')
+                field: cod_tecnica
+      - name: fecha
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha
