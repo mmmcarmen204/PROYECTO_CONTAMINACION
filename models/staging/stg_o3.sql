@@ -1,6 +1,6 @@
 
 
-{% set anios = [2012, 2016, 2020, 2024] %}
+{% set anios = var('anios_proyecto') %}
 
 with unido as (
     {% for anio in anios %}

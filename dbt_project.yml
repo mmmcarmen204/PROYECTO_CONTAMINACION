@@ -20,7 +20,8 @@ clean-targets:
 
 # VARIABLES =====================================================
 vars:
-  provincia: 18   # Granada (código INE de provincia)
+  provincia_proyecto: 18      # Granada (código INE de provincia)
+  anios_proyecto: [2012, 2016, 2020, 2024]        # Años utilizados para el proyectos.
 
 
 #===================================================================

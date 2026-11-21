@@ -7,4 +7,4 @@ select
     fecha_alta,
     fecha_baja
 from {{ ref('stg_estaciones') }}
-where cod_provincia = {{ var('provincia') }}
+where cod_provincia = {{ var('provincia_proyecto') }}
