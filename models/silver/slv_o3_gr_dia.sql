@@ -37,11 +37,10 @@ select
     cod_parametro,
     cod_tecnica,
     fecha,
-    avg(valor)              as valor_medio,
-    max(valor)              as valor_maximo,
-    count(valor)            as horas_validas,
-    count(valor) >= 18      as es_dia_valido,
+    -- valor diario del ozono: máximo de la media móvil de 8 horas (métrica oficial),
+    -- solo con ventanas de al menos 6 de las 8 horas
     max(case when horas_en_ventana >= 6
-             then media_movil_8h end)   as max_media_movil_8h
+             then media_movil_8h end)   as valor_diario,
+    count(valor) >= 18                  as es_dia_valido
 from con_media_8h
 group by cod_estacion, cod_parametro, cod_tecnica, fecha

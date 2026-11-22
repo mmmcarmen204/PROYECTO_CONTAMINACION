@@ -1,50 +1,370 @@
-
-
 version: 2
 
 models:
-  - name: slv_mediciones_diarias
+
+  # ---------------------------------------------------------------------------
+  # NOx diario
+  # ---------------------------------------------------------------------------
+  - name: slv_nox_gr_dia
     description: >
-      Mediciones diarias de O3, NOx y PM10 en las estaciones catalogadas de la
-      provincia definida en la variable 'provincia' (Granada). Una fila por
-      estación, contaminante, técnica y día.
+      Medición diaria de NOx en la provincia de Granada, calculada a partir de
+      los datos horarios. Una fila por estación, parámetro, técnica y día.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
             combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
     columns:
       - name: cod_estacion
+        data_type: number
+        description: "Código de la estación de medida."
         data_tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_estaciones')
+                to: ref('slv_estaciones_granada')
                 field: cod_estacion
+
       - name: cod_parametro
+        data_type: number
+        description: "Código del contaminante (NOx)."
         data_tests:
           - not_null
-          - accepted_values:
+          - relationships:
               arguments:
-                values: [10, 12, 14]
-                quote: false
+                to: ref('slv_parametros_limites')
+                field: cod_parametro
+
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Código de la técnica de medida."
+        data_tests:
+          - not_null
+
       - name: fecha
+        data_type: date
+        description: "Día de la medición."
         data_tests:
           - not_null
-      - name: valor_medio
-        description: "Media diaria de las horas válidas (O3, NOx) o valor diario (PM10), en µg/m3"
+
+      - name: valor_diario
+        data_type: float
+        description: "Media aritmética de las horas válidas del día (µg/m³)."
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: horas_validas
-        description: "Número de horas con dato en el día. Nulo en el PM10, que es diario"
+
+      - name: es_dia_valido
+        data_type: boolean
+        description: "True si el día tiene al menos 18 de 24 horas con dato (75 %)."
+        data_tests:
+          - not_null
+
+  # ---------------------------------------------------------------------------
+  # O3 diario
+  # ---------------------------------------------------------------------------
+  - name: slv_o3_gr_dia
+    description: >
+      Medición diaria de ozono (O3) en la provincia de Granada. El valor diario
+      es el máximo de las medias móviles de 8 horas, indicador que usa la
+      normativa (RD 102/2011). Una fila por estación, parámetro, técnica y día.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+      - columnas_coinciden:
+          arguments:
+            tablas: ['slv_nox_gr_dia', 'slv_pm10_gr']
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Código de la estación de medida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_estaciones_granada')
+                field: cod_estacion
+
+      - name: cod_parametro
+        data_type: number
+        description: "Código del contaminante (O3)."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_parametros_limites')
+                field: cod_parametro
+
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Código de la técnica de medida."
+        data_tests:
+          - not_null
+
+      - name: fecha
+        data_type: date
+        description: "Día de la medición."
+        data_tests:
+          - not_null
+
+      - name: valor_diario
+        data_type: float
+        description: >
+          Máximo diario de las medias móviles de 8 horas (µg/m³). Solo cuentan
+          las medias con al menos 6 de 8 horas con dato.
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 1
-                max_value: 24
+                min_value: 0
+
       - name: es_dia_valido
-        description: "Verdadero si el día tiene al menos 18 horas válidas (75 %). Siempre verdadero en el PM10"
-      - name: max_media_movil_8h
-        description: "Máximo diario de la media móvil de 8 horas con al menos 6 horas válidas. Solo relevante para el O3"
+        data_type: boolean
+        description: "True si el día tiene al menos 18 de 24 horas válidas (75 %)."
+        data_tests:
+          - not_null
+
+  # ---------------------------------------------------------------------------
+  # PM10 diario
+  # ---------------------------------------------------------------------------
+  - name: slv_pm10_gr
+    description: >
+      Medición diaria de PM10 en la provincia de Granada. El dato ya viene
+      diario en origen. Una fila por estación, parámetro, técnica y día.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Código de la estación de medida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_estaciones_granada')
+                field: cod_estacion
+
+      - name: cod_parametro
+        data_type: number
+        description: "Código del contaminante (PM10)."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_parametros_limites')
+                field: cod_parametro
+
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Código de la técnica de medida."
+        data_tests:
+          - not_null
+
+      - name: fecha
+        data_type: date
+        description: "Día de la medición."
+        data_tests:
+          - not_null
+
+      - name: valor_diario
+        data_type: float
+        description: "Concentración media diaria de PM10 (µg/m³), tal como viene en origen."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: es_dia_valido
+        data_type: boolean
+        description: "True si el dato diario es válido."
+        data_tests:
+          - not_null
+
+  # ---------------------------------------------------------------------------
+  # Unión de los tres contaminantes
+  # ---------------------------------------------------------------------------
+  - name: slv_mediciones_diarias
+    description: >
+      Mediciones diarias de NOx, O3 y PM10 en la provincia de Granada, unidas
+      en formato largo (UNION ALL). Una fila por estación, parámetro, técnica y día.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Código de la estación de medida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_estaciones_granada')
+                field: cod_estacion
+
+      - name: cod_parametro
+        data_type: number
+        description: "Código del contaminante. Indica qué significa valor_diario en cada fila."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('slv_parametros_limites')
+                field: cod_parametro
+
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Código de la técnica de medida."
+        data_tests:
+          - not_null
+
+      - name: fecha
+        data_type: date
+        description: "Día de la medición."
+        data_tests:
+          - not_null
+
+      - name: valor_diario
+        data_type: float
+        description: >
+          Valor diario en µg/m³. Según el contaminante: NOx = media diaria;
+          O3 = máximo de las medias móviles de 8 horas; PM10 = media diaria de origen.
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: es_dia_valido
+        data_type: boolean
+        description: "True si el valor diario cumple el criterio de validez del 75 %."
+        data_tests:
+          - not_null
+
+  # ---------------------------------------------------------------------------
+  # Estaciones
+  # ---------------------------------------------------------------------------
+  - name: slv_estaciones_granada
+    description: "Catálogo de estaciones de medida de la provincia de Granada. Una fila por estación."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "fecha_baja is null or fecha_baja >= fecha_alta"
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Código único de la estación."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: nombre_estacion
+        data_type: varchar
+        description: "Nombre de la estación."
+        data_tests:
+          - not_null
+
+      - name: municipio
+        data_type: varchar
+        description: "Municipio donde está la estación."
+        data_tests:
+          - not_null
+
+      - name: fecha_alta
+        data_type: date
+        description: "Fecha en que la estación empezó a medir."
+
+      - name: fecha_baja
+        data_type: date
+        description: "Fecha en que la estación dejó de medir. Nulo si sigue activa."
+
+  # ---------------------------------------------------------------------------
+  # Parámetros y límites normativos
+  # ---------------------------------------------------------------------------
+  - name: slv_parametros_limites
+    description: >
+      Catálogo de contaminantes con sus límites legales (UE) y valores guía (OMS).
+      Una fila por contaminante. Un límite nulo significa que no aplica a ese contaminante.
+    columns:
+      - name: cod_parametro
+        data_type: number
+        description: "Código único del contaminante."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: nombre_parametro
+        data_type: varchar
+        description: "Nombre del contaminante según el catálogo de la Junta."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: unidad
+        data_type: varchar
+        description: "Unidad de medida. Puede ser nula en parámetros sin unidad."
+
+      - name: limite_diario_ue
+        data_type: number
+        description: "Valor límite diario de la normativa europea."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: limite_anual_ue
+        data_type: number
+        description: "Valor límite anual de la normativa europea."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: limite_horario_ue
+        data_type: number
+        description: "Valor límite horario de la normativa europea."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: valor_objetivo_8h_ue
+        data_type: number
+        description: "Valor objetivo para la media móvil de 8 horas (aplica al O3)."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: umbral_informacion_ue
+        data_type: number
+        description: "Umbral a partir del cual hay que informar a la población (aplica al O3)."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: guia_diaria_oms
+        data_type: number
+        description: "Valor guía diario de la OMS."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: guia_anual_oms
+        data_type: number
+        description: "Valor guía anual de la OMS."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: guia_8h_oms
+        data_type: number
+        description: "Valor guía de la OMS para la media de 8 horas (aplica al O3)."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0

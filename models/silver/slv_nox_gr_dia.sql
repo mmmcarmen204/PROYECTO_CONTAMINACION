@@ -17,9 +17,7 @@ select
     cod_parametro,
     cod_tecnica,
     fecha,
-    avg(valor)              as valor_medio,
-    max(valor)              as valor_maximo,
-    count(valor)            as horas_validas,
+    avg(valor)              as valor_diario,     -- media diaria de las horas con dato
     count(valor) >= 18      as es_dia_valido
 from horario
 group by cod_estacion, cod_parametro, cod_tecnica, fecha

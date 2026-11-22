@@ -4,9 +4,6 @@ select
     cod_parametro,
     cod_tecnica,
     fecha,
-    valor_medio,
-    valor_maximo,
-    horas_validas,
+    valor_diario,
     es_dia_valido,
-    max_media_movil_8h
 from {{ ref('slv_mediciones_diarias') }}

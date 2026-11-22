@@ -5,8 +5,8 @@ select
     f.anio,
     p.nombre_parametro,
     e.nombre_estacion,
-    round(avg(h.valor_medio), 1)    as media_anual,
-    count(*)                        as dias_validos
+    round(avg(h.valor_diario), 1)    as media_anual,
+    count(h.valor_diario)               as dias_validos
 from {{ ref('fct_calidad_aire_diaria') }} h
 join {{ ref('dim_fecha') }} f        on h.fecha = f.fecha
 join {{ ref('dim_estaciones') }} e   on h.cod_estacion = e.cod_estacion
