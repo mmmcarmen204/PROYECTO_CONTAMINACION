@@ -30,13 +30,6 @@ vars:
 models:
   calidad_aire_granada:
 
-    # BRONZE -------------------------------------------------------
-    
-    bronze:
-      +materialized: view
-      +database: "{{ env_var('DBT_BRONZE') }}"
-      +schema: BRONZE
-
     # SILVER ------------------------------------------------------- 
     staging:
       +materialized: view
@@ -60,14 +53,15 @@ models:
 #===================================================================
 seeds:
   calidad_aire_granada:
-  +database: "{{ env_var('DBT_BRONZE') }}"
-  +schema: seeds
+    +database: "{{ env_var('DBT_BRONZE') }}"
+    +schema: seeds
 
 
 #===================================================================
 # SNAPSHOTS
 #===================================================================
-snapshots:
- +transient: false
- +target_database: 
- +target_schema: snapshots
+
+#snapshots:
+# +transient: false
+# +database: "{{ env_var('DBT_SILVER') }}"
+# +schema: snapshots
