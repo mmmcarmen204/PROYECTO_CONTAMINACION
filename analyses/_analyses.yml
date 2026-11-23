@@ -1,0 +1,38 @@
+version: 2
+
+analyses:
+  - name: evolucion_anual
+    description: >
+      Pregunta 1: ¿ha mejorado la calidad del aire? Media anual del valor diario
+      por contaminante y estación, solo con días válidos. El PM10 usa solo la técnica
+      manual, la única presente los cuatro años.
+
+  - name: cumplimiento_ozono
+    description: >
+      Pregunta 2: ¿se cumplen los límites? Días al año en que el ozono supera el valor
+      objetivo de la UE (120 µg/m3) y la guía de la OMS (100 µg/m3), medidos con el
+      máximo diario de la media móvil de 8 horas.
+
+  - name: cumplimiento_pm10
+    description: >
+      Pregunta 2: ¿se cumplen los límites? Media anual del PM10 (técnica manual) frente
+      al límite anual de la UE (40 µg/m3) y la guía de la OMS (15 µg/m3). Se comparan
+      medias y no recuentos de días, porque el muestreo manual no mide todos los días.
+
+  - name: umbrales_horarios_ozono
+    description: >
+      Pregunta 2: horas al año en que el ozono supera el umbral de información
+      (180 µg/m3) y de alerta (240 µg/m3). Usa el dato horario de staging, porque
+      estos umbrales se definen sobre valores horarios.
+
+  - name: efecto_confinamiento
+    description: >
+      Pregunta 3: ¿qué efecto tuvo el confinamiento? Media de marzo a junio de cada año
+      para el NOx y el ozono, y variación de 2020 respecto a la media de los otros tres
+      años en los mismos meses, para evitar el efecto de la estacionalidad.
+
+  - name: comparaciones_tecnicas_pm10
+    description: >
+      Comprobación de diseño: compara las técnicas manual (M) y automática (49) del
+      PM10 en los días de 2024 en que una misma estación midió con las dos, para
+      justificar que solo se use la técnica manual al comparar años.

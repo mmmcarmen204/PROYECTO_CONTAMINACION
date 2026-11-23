@@ -13,7 +13,7 @@ with medias as (
     join {{ ref('dim_parametros') }} p   on h.cod_parametro = p.cod_parametro
     where h.cod_parametro in (12, 14)
       and h.es_dia_valido
-      and f.es_marzo_a_junio
+      and f.confinamiento
     group by f.anio, p.nombre_parametro
 )
 
