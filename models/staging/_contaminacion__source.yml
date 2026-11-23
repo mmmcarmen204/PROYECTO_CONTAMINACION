@@ -1,0 +1,917 @@
+version: 2
+       
+sources:
+  - name: contaminacion
+    database: "{{ env_var('DBT_BRONZE') }}" # base de datos donde están los CSV cargados
+    schema: RAW     # el que puse en generate_source
+    tables:
+
+# LISTADO ESTACIONES
+      - name: listado_estaciones
+        columns:
+          - name: cod_local_n
+            data_type: number
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: cod_estacion_dem
+            data_type: varchar
+          - name: nombre
+            data_type: varchar
+          - name: fecha_ini
+            data_type: varchar
+          - name: fecha_baja
+            data_type: varchar
+          - name: n_ccaa
+            data_type: varchar
+          - name: n_provincia
+            data_type: varchar
+          - name: n_municipio
+            data_type: varchar
+          - name: rvca
+            data_type: varchar
+
+      - name: listado_parametros
+        columns:
+          - name: c1
+            data_type: varchar
+          - name: c2
+            data_type: varchar
+          - name: c3
+            data_type: varchar
+
+      - name: listado_tecnicas_de_medida
+        columns:
+          - name: c1
+            data_type: varchar
+          - name: c2
+            data_type: varchar
+
+      - name: nox_hh_2012
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: nox_hh_2016
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: nox_hh_2020
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: nox_hh_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['nox_hh_2012', 'nox_hh_2016', 'nox_hh_2020']
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+
+      - name: o3_hh_2012
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: o3_hh_2016
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: o3_hh_2020
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+      - name: o3_hh_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['o3_hh_2012', 'o3_hh_2016', 'o3_hh_2020']
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: number
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: dia
+            data_type: number
+          - name: h01
+            data_type: number
+          - name: h02
+            data_type: number
+          - name: h03
+            data_type: number
+          - name: h04
+            data_type: number
+          - name: h05
+            data_type: number
+          - name: h06
+            data_type: number
+          - name: h07
+            data_type: number
+          - name: h08
+            data_type: number
+          - name: h09
+            data_type: number
+          - name: h10
+            data_type: number
+          - name: h11
+            data_type: number
+          - name: h12
+            data_type: number
+          - name: h13
+            data_type: number
+          - name: h14
+            data_type: number
+          - name: h15
+            data_type: number
+          - name: h16
+            data_type: number
+          - name: h17
+            data_type: number
+          - name: h18
+            data_type: number
+          - name: h19
+            data_type: number
+          - name: h20
+            data_type: number
+          - name: h21
+            data_type: number
+          - name: h22
+            data_type: number
+          - name: h23
+            data_type: number
+          - name: h24
+            data_type: number
+
+
+      - name: pm10_dd_2012
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: varchar
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: d01
+            data_type: number
+          - name: d02
+            data_type: number
+          - name: d03
+            data_type: number
+          - name: d04
+            data_type: number
+          - name: d05
+            data_type: number
+          - name: d06
+            data_type: number
+          - name: d07
+            data_type: number
+          - name: d08
+            data_type: number
+          - name: d09
+            data_type: number
+          - name: d10
+            data_type: number
+          - name: d11
+            data_type: number
+          - name: d12
+            data_type: number
+          - name: d13
+            data_type: number
+          - name: d14
+            data_type: number
+          - name: d15
+            data_type: number
+          - name: d16
+            data_type: number
+          - name: d17
+            data_type: number
+          - name: d18
+            data_type: number
+          - name: d19
+            data_type: number
+          - name: d20
+            data_type: number
+          - name: d21
+            data_type: number
+          - name: d22
+            data_type: number
+          - name: d23
+            data_type: number
+          - name: d24
+            data_type: number
+          - name: d25
+            data_type: number
+          - name: d26
+            data_type: number
+          - name: d27
+            data_type: number
+          - name: d28
+            data_type: number
+          - name: d29
+            data_type: number
+          - name: d30
+            data_type: number
+          - name: d31
+            data_type: number
+
+      - name: pm10_dd_2016
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: varchar
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: d01
+            data_type: number
+          - name: d02
+            data_type: number
+          - name: d03
+            data_type: number
+          - name: d04
+            data_type: number
+          - name: d05
+            data_type: number
+          - name: d06
+            data_type: number
+          - name: d07
+            data_type: number
+          - name: d08
+            data_type: number
+          - name: d09
+            data_type: number
+          - name: d10
+            data_type: number
+          - name: d11
+            data_type: number
+          - name: d12
+            data_type: number
+          - name: d13
+            data_type: number
+          - name: d14
+            data_type: number
+          - name: d15
+            data_type: number
+          - name: d16
+            data_type: number
+          - name: d17
+            data_type: number
+          - name: d18
+            data_type: number
+          - name: d19
+            data_type: number
+          - name: d20
+            data_type: number
+          - name: d21
+            data_type: number
+          - name: d22
+            data_type: number
+          - name: d23
+            data_type: number
+          - name: d24
+            data_type: number
+          - name: d25
+            data_type: number
+          - name: d26
+            data_type: number
+          - name: d27
+            data_type: number
+          - name: d28
+            data_type: number
+          - name: d29
+            data_type: number
+          - name: d30
+            data_type: number
+          - name: d31
+            data_type: number
+
+      - name: pm10_dd_2020
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: varchar
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: d01
+            data_type: number
+          - name: d02
+            data_type: number
+          - name: d03
+            data_type: number
+          - name: d04
+            data_type: number
+          - name: d05
+            data_type: number
+          - name: d06
+            data_type: number
+          - name: d07
+            data_type: number
+          - name: d08
+            data_type: number
+          - name: d09
+            data_type: number
+          - name: d10
+            data_type: number
+          - name: d11
+            data_type: number
+          - name: d12
+            data_type: number
+          - name: d13
+            data_type: number
+          - name: d14
+            data_type: number
+          - name: d15
+            data_type: number
+          - name: d16
+            data_type: number
+          - name: d17
+            data_type: number
+          - name: d18
+            data_type: number
+          - name: d19
+            data_type: number
+          - name: d20
+            data_type: number
+          - name: d21
+            data_type: number
+          - name: d22
+            data_type: number
+          - name: d23
+            data_type: number
+          - name: d24
+            data_type: number
+          - name: d25
+            data_type: number
+          - name: d26
+            data_type: number
+          - name: d27
+            data_type: number
+          - name: d28
+            data_type: number
+          - name: d29
+            data_type: number
+          - name: d30
+            data_type: number
+          - name: d31
+            data_type: number
+
+      - name: pm10_dd_2024
+        data_tests:
+          - columnas_coinciden:
+              arguments:
+                tablas: ['pm10_dd_2012', 'pm10_dd_2016', 'pm10_dd_2020']
+        columns:
+          - name: provincia
+            data_type: number
+          - name: municipio
+            data_type: number
+          - name: estacion
+            data_type: number
+          - name: parametro
+            data_type: number
+          - name: tecnica
+            data_type: varchar
+          - name: anyo
+            data_type: number
+          - name: mes
+            data_type: number
+          - name: d01
+            data_type: number
+          - name: d02
+            data_type: number
+          - name: d03
+            data_type: number
+          - name: d04
+            data_type: number
+          - name: d05
+            data_type: number
+          - name: d06
+            data_type: number
+          - name: d07
+            data_type: number
+          - name: d08
+            data_type: number
+          - name: d09
+            data_type: number
+          - name: d10
+            data_type: number
+          - name: d11
+            data_type: number
+          - name: d12
+            data_type: number
+          - name: d13
+            data_type: number
+          - name: d14
+            data_type: number
+          - name: d15
+            data_type: number
+          - name: d16
+            data_type: number
+          - name: d17
+            data_type: number
+          - name: d18
+            data_type: number
+          - name: d19
+            data_type: number
+          - name: d20
+            data_type: number
+          - name: d21
+            data_type: number
+          - name: d22
+            data_type: number
+          - name: d23
+            data_type: number
+          - name: d24
+            data_type: number
+          - name: d25
+            data_type: number
+          - name: d26
+            data_type: number
+          - name: d27
+            data_type: number
+          - name: d28
+            data_type: number
+          - name: d29
+            data_type: number
+          - name: d30
+            data_type: number
+          - name: d31
+            data_type: number

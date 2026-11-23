@@ -1,0 +1,223 @@
+
+version: 2
+
+models:
+
+  # ---------------------------------------------------------------------------
+  # Dimensión de estaciones
+  # ---------------------------------------------------------------------------
+  - name: dim_estaciones
+    description: >
+      Estaciones de la red de calidad del aire de Andalucía. Incluye todas las
+      estaciones, no solo las de Granada: el filtro lo aplica la tabla de hechos.
+      Una fila por estación.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "fecha_baja is null or fecha_baja >= fecha_alta"
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Clave de la estación: provincia + municipio (3 dígitos) + estación (3 dígitos)."
+        data_tests: [unique, not_null]
+      - name: nombre_estacion
+        data_type: varchar
+        description: "Nombre de la estación."
+        data_tests: [not_null]
+      - name: municipio
+        data_type: varchar
+        description: "Municipio donde está la estación."
+      - name: provincia
+        data_type: varchar
+        description: "Provincia donde está la estación."
+      - name: cod_provincia
+        data_type: number
+        description: "Código INE de la provincia."
+      - name: fecha_alta
+        data_type: date
+        description: "Fecha en que la estación empezó a medir."
+      - name: fecha_baja
+        data_type: date
+        description: "Fecha en que la estación dejó de medir. Nulo si sigue activa."
+      - name: es_activa
+        data_type: boolean
+        description: "True si la estación no tiene fecha de baja."
+        data_tests: [not_null]
+
+  # ---------------------------------------------------------------------------
+  # Dimensión de parámetros (contaminantes y límites)
+  # ---------------------------------------------------------------------------
+  - name: dim_parametros
+    description: >
+      Catálogo de contaminantes con sus límites legales (Directiva 2008/50/CE) y
+      guías de la OMS (2021). Una fila por contaminante. Un límite nulo significa
+      que no aplica a ese contaminante.
+    columns:
+      - name: cod_parametro
+        data_type: number
+        description: "Código del contaminante."
+        data_tests: [unique, not_null]
+      - name: nombre_parametro
+        data_type: varchar
+        description: "Nombre del contaminante según el catálogo de la Junta."
+        data_tests: [unique, not_null]
+      - name: unidad
+        data_type: varchar
+        description: "Unidad de medida. Puede ser nula en parámetros sin unidad."
+      - name: limite_diario_ue
+        data_type: number
+        description: "Valor límite diario de la normativa europea."
+      - name: limite_anual_ue
+        data_type: number
+        description: "Valor límite anual de la normativa europea."
+      - name: limite_horario_ue
+        data_type: number
+        description: "Valor límite horario de la normativa europea."
+      - name: valor_objetivo_8h_ue
+        data_type: number
+        description: "Valor objetivo para la media móvil de 8 horas (aplica al O3)."
+      - name: umbral_informacion_ue
+        data_type: number
+        description: "Umbral horario de información a la población (aplica al O3)."
+      - name: guia_diaria_oms
+        data_type: number
+        description: "Valor guía diario de la OMS."
+      - name: guia_anual_oms
+        data_type: number
+        description: "Valor guía anual de la OMS."
+      - name: guia_8h_oms
+        data_type: number
+        description: "Valor guía de la OMS para la media de 8 horas (aplica al O3)."
+
+  # ---------------------------------------------------------------------------
+  # Dimensión de técnicas de medida
+  # ---------------------------------------------------------------------------
+  - name: dim_tecnicas
+    description: "Catálogo de técnicas de medida. Una fila por técnica."
+    columns:
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Código de la técnica (numérico o letra, como M o A)."
+        data_tests: [unique, not_null]
+      - name: nombre_tecnica
+        data_type: varchar
+        description: "Descripción de la técnica de medida."
+      - name: es_manual
+        data_type: boolean
+        description: "True si es muestreo manual (técnica M), la única presente en el PM10 los cuatro años."
+        data_tests: [not_null]
+
+  # ---------------------------------------------------------------------------
+  # Dimensión de fecha
+  # ---------------------------------------------------------------------------
+  - name: dim_fecha
+    description: >
+      Calendario generado en dbt, un día por fila entre 2012 y 2024, con los
+      atributos que usan los análisis.
+    columns:
+      - name: fecha
+        data_type: date
+        description: "Día."
+        data_tests: [unique, not_null]
+      - name: anio
+        data_type: number
+        description: "Año."
+      - name: mes
+        data_type: number
+        description: "Mes (1 a 12)."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 12
+      - name: dia_semana
+        data_type: number
+        description: "Día de la semana ISO (1 = lunes, 7 = domingo)."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 7
+      - name: es_fin_de_semana
+        data_type: boolean
+        description: "True si es sábado o domingo."
+      - name: estacion_del_anio
+        data_type: varchar
+        description: "Estación meteorológica: invierno = diciembre a febrero, primavera = marzo a mayo, etc."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Invierno', 'Primavera', 'Verano', 'Otoño']
+      - name: es_marzo_a_junio
+        data_type: boolean
+        description: "True entre marzo y junio. Permite comparar el confinamiento con los mismos meses de otros años."
+      - name: es_confinamiento
+        data_type: boolean
+        description: "True durante el estado de alarma de 2020 (del 14 de marzo al 21 de junio)."
+
+  # ---------------------------------------------------------------------------
+  # Tabla de hechos
+  # ---------------------------------------------------------------------------
+  - name: fct_calidad_aire_diaria
+    description: >
+      Valor diario de referencia de O3, NOx y PM10 en las estaciones de Granada.
+      Una fila por estación, contaminante, técnica y día.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [cod_estacion, cod_parametro, cod_tecnica, fecha]
+    columns:
+      - name: cod_estacion
+        data_type: number
+        description: "Estación de medida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_estaciones')
+                field: cod_estacion
+      - name: cod_parametro
+        data_type: number
+        description: "Contaminante. Indica qué significa valor_diario en cada fila."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_parametros')
+                field: cod_parametro
+      - name: cod_tecnica
+        data_type: varchar
+        description: "Técnica de medida."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_tecnicas')
+                field: cod_tecnica
+      - name: fecha
+        data_type: date
+        description: "Día de la medición."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha
+      - name: valor_diario
+        data_type: float
+        description: >
+          Valor diario de referencia en µg/m³. Según el contaminante:
+          O3 = máximo de la media móvil de 8 horas; NOx = media diaria;
+          PM10 = valor diario de origen.
+        data_tests:
+          - not_null:
+              config:
+                where: "es_dia_valido"
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: es_dia_valido
+        data_type: boolean
+        description: "True si el día tiene al menos 18 de 24 horas con dato. Siempre verdadero en el PM10."
+        data_tests:
+          - not_null
