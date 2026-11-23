@@ -2,8 +2,8 @@
 
 with dias as (
     select
-        dateadd(day, row_number() over (order by seq4()) - 1, '2012-01-01'::date) as fecha
-    from table(generator(rowcount => 5000))
+        dateadd(day, row_number() over (order by seq4()) - 1, '2010-01-01'::date) as fecha
+    from table(generator(rowcount => 7000))
 )
 
 select
@@ -18,7 +18,6 @@ select
         when month(fecha) in (6, 7, 8)  then 'Verano'
         else 'Otoño'
     end                                                 as estacion_del_anio,
-    month(fecha) between 3 and 6                        as es_marzo_a_junio,
-    fecha between '2020-03-14' and '2020-06-21'         as es_confinamiento
+    month(fecha) between 3 and 6                        as confinamiento,
 from dias
-where fecha <= '2024-12-31'
+where fecha <= '2026-12-31'

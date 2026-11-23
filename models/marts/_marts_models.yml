@@ -39,7 +39,7 @@ models:
       - name: fecha_baja
         data_type: date
         description: "Fecha en que la estación dejó de medir. Nulo si sigue activa."
-      - name: es_activa
+      - name: activa
         data_type: boolean
         description: "True si la estación no tiene fecha de baja."
         data_tests: [not_null]
@@ -102,7 +102,7 @@ models:
       - name: nombre_tecnica
         data_type: varchar
         description: "Descripción de la técnica de medida."
-      - name: es_manual
+      - name: tecnica_manual
         data_type: boolean
         description: "True si es muestreo manual (técnica M), la única presente en el PM10 los cuatro años."
         data_tests: [not_null]
