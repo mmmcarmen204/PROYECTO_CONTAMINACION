@@ -2,7 +2,7 @@ version: 2
        
 sources:
   - name: contaminacion
-    database: DEV_BRONZE_PROYECTO   # base de datos donde están los CSV cargados
+    database: "{{ env_var('DBT_BRONZE') }}" # base de datos donde están los CSV cargados
     schema: RAW     # el que puse en generate_source
     tables:
 
