@@ -13,6 +13,6 @@ join {{ ref('dim_estaciones') }} e   on h.cod_estacion = e.cod_estacion
 join {{ ref('dim_parametros') }} p   on h.cod_parametro = p.cod_parametro
 join {{ ref('dim_tecnicas') }} t     on h.cod_tecnica = t.cod_tecnica
 where h.es_dia_valido
-  and (h.cod_parametro <> 10 or t.es_manual)
+  and (h.cod_parametro <> 10 or t.tecnica_manual)
 group by f.anio, p.nombre_parametro, e.nombre_estacion
 order by p.nombre_parametro, e.nombre_estacion, f.anio
