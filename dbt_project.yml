@@ -21,6 +21,7 @@ clean-targets:
 # VARIABLES =====================================================
 vars:
   provincia_proyecto: 18      # Granada (código INE de provincia)
+    # 41 Sevilla, 29 Málaga, 23 Jaen, 21 Huelva, 18 Granada, 14 Córdoba, 11 Cádiz, 4 Almería
   anios_proyecto: [2012, 2016, 2020, 2024]        # Años utilizados para el proyectos.
 
 
