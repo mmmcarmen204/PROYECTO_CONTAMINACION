@@ -1,10 +1,5 @@
 --MODELO STG_PM10 -------------------------------------------------------------------------------------
 
-{{ config(
-    materialized = 'incremental',
-    unique_key = ['cod_estacion', 'cod_parametro', 'cod_tecnica', 'fecha'],
-    incremental_strategy = 'merge'
-) }}
 
 {% set relaciones = dbt_utils.get_relations_by_pattern(
     schema_pattern = 'RAW',
@@ -17,6 +12,7 @@ with unido as (
 ),
 
 {% if is_incremental() %}
+
 -- En las ejecuciones incrementales solo se procesa desde el último año ya cargado
 pendientes as (
     select *
