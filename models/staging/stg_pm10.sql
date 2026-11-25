@@ -1,5 +1,9 @@
 --MODELO STG_PM10 -------------------------------------------------------------------------------------
 
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2012') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2016') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2020') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2024') }}
 
 {% set relaciones = dbt_utils.get_relations_by_pattern(
     schema_pattern = 'RAW',
@@ -11,19 +15,10 @@ with unido as (
     {{ dbt_utils.union_relations(relations = relaciones) }}
 ),
 
-{% if is_incremental() %}
-
--- En las ejecuciones incrementales solo se procesa desde el último año ya cargado
-pendientes as (
-    select *
-    from unido
-    where anyo >= (select coalesce(max(year(fecha)), 0) from {{ this }})
-),
-{% endif %}
 
 despivotado as (
     select *
-    from {% if is_incremental() %} pendientes {% else %} unido {% endif %}
+    from unido
     unpivot (valor for dia_col in (
         d01, d02, d03, d04, d05, d06, d07, d08, d09, d10,
         d11, d12, d13, d14, d15, d16, d17, d18, d19, d20,
