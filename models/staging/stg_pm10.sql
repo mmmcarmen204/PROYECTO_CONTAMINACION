@@ -1,17 +1,33 @@
 --MODELO STG_PM10 -------------------------------------------------------------------------------------
 
-{% set anios = var('anios_proyecto') %}
+{{ config(
+    materialized = 'incremental',
+    unique_key = ['cod_estacion', 'cod_parametro', 'cod_tecnica', 'fecha'],
+    incremental_strategy = 'merge'
+) }}
+
+{% set relaciones = dbt_utils.get_relations_by_pattern(
+    schema_pattern = 'RAW',
+    table_pattern = 'PM10_DD_20%',
+    database = env_var('DBT_BRONZE')
+) %}
 
 with unido as (
-    {% for anio in anios %}
-    select * from {{ source('contaminacion', 'pm10_dd_' ~ anio) }}
-    {% if not loop.last %} union all {% endif %}
-    {% endfor %}
+    {{ dbt_utils.union_relations(relations = relaciones) }}
 ),
+
+{% if is_incremental() %}
+-- En las ejecuciones incrementales solo se procesa desde el último año ya cargado
+pendientes as (
+    select *
+    from unido
+    where anyo >= (select coalesce(max(year(fecha)), 0) from {{ this }})
+),
+{% endif %}
 
 despivotado as (
     select *
-    from unido
+    from {% if is_incremental() %} pendientes {% else %} unido {% endif %}
     unpivot (valor for dia_col in (
         d01, d02, d03, d04, d05, d06, d07, d08, d09, d10,
         d11, d12, d13, d14, d15, d16, d17, d18, d19, d20,
