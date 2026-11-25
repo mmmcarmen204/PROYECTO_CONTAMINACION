@@ -1,13 +1,20 @@
 --MODELO STG_PM10 -------------------------------------------------------------------------------------
 
-{% set anios = var('anios_proyecto') %}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2012') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2016') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2020') }}
+-- depends_on: {{ source('contaminacion', 'pm10_dd_2024') }}
+
+{% set relaciones = dbt_utils.get_relations_by_pattern(
+    schema_pattern = 'RAW',
+    table_pattern = 'PM10_DD_20%',
+    database = env_var('DBT_BRONZE')
+) %}
 
 with unido as (
-    {% for anio in anios %}
-    select * from {{ source('contaminacion', 'pm10_dd_' ~ anio) }}
-    {% if not loop.last %} union all {% endif %}
-    {% endfor %}
+    {{ dbt_utils.union_relations(relations = relaciones) }}
 ),
+
 
 despivotado as (
     select *
